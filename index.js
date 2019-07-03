@@ -2,7 +2,6 @@ const express = require('express');
 const path = require('path');
 const logger = require('./middleware/logger');
 const exphbs = require('express-handlebars');
-const members = require('./Members');
 const CustomersDAL = require('./dal/CustomersDAL');
 
 const customersDAL = new CustomersDAL();
