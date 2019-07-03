@@ -1,0 +1,23 @@
+{
+  "name": "expresscrashcourse",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index",
+    "dev": "nodemon index"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-handlebars": "^3.1.0",
+    "fs": "0.0.1-security",
+    "moment": "^2.24.0",
+    "mongodb": "^3.2.7",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.1"
+  }
+}
