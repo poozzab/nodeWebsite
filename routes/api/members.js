@@ -12,6 +12,7 @@ router.get('/', async (req, res) => {
 
 // Get Single Member
 router.get('/:id', async (req, res) => {
+    console.log(`Attempting to get ${req.params.id}`);
     try
     {
         const member = await customersDAL.findById( req.params.id );
@@ -82,17 +83,25 @@ router.put('/:id', async (req, res) => {
 });
 
 // Delete Member
-router.delete('/:id', (req, res) => {
-    const deleteFilter = { "_id": req.params.id };
-    customersDAL.deleteCustomer( (err, success, numRemoved) => {
-        if( success ) {
-            res.status(200);
-            res.json({msg: `Removed ${numRemoved} customers`});
-        } else {
-            res.status(400);
-            res.json({msg: `Unable to delete customer with id  ${req.params.id }`});
-        }
-    }, deleteFilter );
+router.delete('/:id', async (req, res) => {
+    console.log(`Attempting to delete ${req.params.id}`);
+    const id = req.params.id;
+    try{
+        await customersDAL.deleteCustomer( id ) 
+        res.status(200);
+    } catch ( err ) {
+        res.status(500).json({msg:`Failed to delete ${id}`});
+    }
 });
+
+// (err, success, numRemoved) => {
+//     if( success ) {
+//         res.status(200);
+//         res.json({msg: `Removed ${numRemoved} customers`});
+//     } else {
+//         res.status(400);
+//         res.json({msg: `Unable to delete customer with id  ${req.params.id }`});
+//     }
+// },
 
 module.exports = router;

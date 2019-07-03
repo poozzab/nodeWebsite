@@ -1,6 +1,7 @@
 "Use strict";
 var $ = window.$;
 var ko = window.ko;
+var _ = window._;
 
 const addMemberForm = {
     first_name: '',
@@ -18,3 +19,12 @@ addMemberForm.submit = function(formBody) {
 }
 
 ko.applyBindings(addMemberForm, document.getElementById('create-members-form'));
+
+_.forEach(document.getElementsByClassName('delete-member-button'), (form)=> {
+    var buttonModel = {};
+    buttonModel.submit = function(formBody) {
+        var response = $.ajax( '/api/members/' + $(formBody).data('id'), {method:'DELETE'});
+        console.log(response);
+    };
+    ko.applyBindings( buttonModel, form );
+});

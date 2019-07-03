@@ -32,10 +32,8 @@ class CustomersDal {
         return await this.mongoClient.updateInCollection( id, newProperties, collectionName );
     }
 
-    deleteCustomer(customerHandler, deleteFilter) {
-        if( typeof findFilter === 'object' && deleteFilter.length > 0 ) {
-            this.mongoClient.deleteCustomer( customerHandler, deleteFilter );
-        }
+    async deleteCustomer(id) {
+        return await this.mongoClient.deleteCustomer( collectionName, id );
     }
 }
 

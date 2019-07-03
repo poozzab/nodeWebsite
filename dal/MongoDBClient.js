@@ -62,35 +62,16 @@ class MongoDBClient {
         return true;
     }
 
-    deleteCustomer( customerHandler, deleteFilter ) {
-        MongoClient.connect(dburl, (err, db) => {
-            if( err ) {
-                customerHandler( err, false );
-                db.close();
-                throw err;
-            }
-            var collection = dbo.collection(collectionName);
-            collection.findOne(deleteFilter, (err, customer) => {
-                if( err ) {
-                    customerHandler( err, false );
-                    db.close();
-                    throw err;
-                }
-                custFound = true;
-                cust = customer;
-            });
-            collection.remove(deleteFilter,{single:1},(err,numRemoved) => {
-                if( err ) {
-                    customerHandler( err, false );
-                    db.close();
-                    throw err;
-                }
-                customerHandler(err, true, numRemoved );
-            });
-        });
+    async deleteCustomer( collectionName, id ) {
+        if( !this.db ) await this.initializeDB();
+        try {
+            await this.dbo.collection( collectionName ).deleteOne({_id:new ObjectId(id)});
+        } catch ( err ) {
+            console.log(`Failed to delete ${id}`);
+            throw err;
+        }
+        return true;
     }
-
-
 }
 
 module.exports = MongoDBClient;

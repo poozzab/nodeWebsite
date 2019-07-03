@@ -35,10 +35,15 @@
     {{#each members}}
         <li class="list-group-item" >
             <div class="row">
-                <div class="col-10">{{this.first_name}} {{this.last_name}}: {{this.email}}</div>
+                <div class="col-8">{{this.first_name}} {{this.last_name}}: {{this.email}}</div>
                 <div class="col-2">
                     <form action="/update/{{this._id}}" method="GET" style="display: inline-flex">
                         <input type="submit" value="Update" class="btn btn-primary">
+                    </form>
+                </div>
+                <div class="col-2">
+                    <form class="delete-member-button" action="/api/members/{{this._id}}" data-id="{{this._id}}" method="DELETE" style="display: inline-flex" data-bind="submit: submit">
+                        <input type="submit" value="Delete" class="btn btn-primary">
                     </form>
                 </div>
             </div>
