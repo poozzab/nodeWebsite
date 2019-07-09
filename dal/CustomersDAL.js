@@ -5,7 +5,7 @@ var collectionName = 'customers';
 
 class CustomersDal {
     constructor() {
-        this.mongoClient = new MongoDBClient(dbname, collectionName );
+        this.mongoClient = new MongoDBClient( dbname, collectionName );
     }
 
     async findCustomer( findFilter={}) {

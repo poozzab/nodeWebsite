@@ -8,43 +8,61 @@ var dburl = "mongodb://localhost:27017/";
 var dockerURL = "mongodb://192.168.99.104:27017";
 
 class MongoDBClient {
-    constructor( dbname, collectionName, url=dockerURL ) {
+    constructor( dbname, collectionName=null, url=dockerURL ) {
         this.dbname = dbname;
         this.collectionName = collectionName;
         this.url = url;
         this.db = null;
         this.dbo = null;
+        this.collection = null;
     }
 
     async initializeDB() {
         this.db = await mongodb.MongoClient.connect( this.url );
         this.dbo = this.db.db(this.dbname);
+        await this.setCollection();
+    }
+
+    async setCollection() {
+        if ( this.collectionName ) {
+            this.collection = this.dbo.collection( this.collectionName );
+        }
+    }
+
+    setCollectionName( collectionName ) {
+        this.collectionName = collectionName;
+        this.setCollection();
     }
 
     async findInCollection( findFilter={} ) {
-        if ( !this.db ) await this.initializeDB();
-        return this.dbo.collection( this.collectionName ).find(findFilter).toArray();
+        if ( !this.db && !this.db.isConnected() ) await this.initializeDB();
+        if ( !this.collection ) throw new Error('No Collection set');
+        return this.collection.find(findFilter).toArray();
     };
 
     async findOneInCollection( findFilter={}) {
-        if ( !this.db ) await this.initializeDB();
-        return await this.dbo.collection( this.collectionName ).findOne(findFilter);
+        if ( !this.db && !this.db.isConnected() ) await this.initializeDB();
+        if ( !this.collection ) throw new Error('No Collection set');
+        return await this.collection.findOne(findFilter);
     }
 
     async findById( id ) {
-        if ( !this.db ) await this.initializeDB();
-        return await this.dbo.collection( this.collectionName ).findOne({_id: new ObjectId(id)});
+        if ( !this.db && !this.db.isConnected() ) await this.initializeDB();
+        if ( !this.collection ) throw new Error('No Collection set');
+        return await this.collection.findOne({_id: new ObjectId(id)});
     }
 
     async getAllInCollection() {
-        if ( !this.db ) await this.initializeDB();
-        return this.dbo.collection( this.collectionName ).find().toArray();
+        if ( !this.db && !this.db.isConnected() ) await this.initializeDB();
+        if ( !this.collection ) throw new Error('No Collection set');
+        return this.collection.find().toArray();
     }
 
     async addToCollection( newEntry ) {
-        if( !this.db ) await this.initializeDB();
+        if( !this.db && !this.db.isConnected() ) await this.initializeDB();
+        if ( !this.collection ) throw new Error('No Collection set');
         try {
-            await this.dbo.collection(this.collectionName).insertOne(newEntry);
+            await this.collection.insertOne(newEntry);
         } catch ( err ) {
             console.log(`Failed to add ${newEntry} to ${this.collectionName}`);
             throw err;
@@ -53,9 +71,10 @@ class MongoDBClient {
     }
 
     async updateInCollection( id, newProperties ) {
-        if( !this.db ) await this.initializeDB();
+        if( !this.db && !this.db.isConnected() ) await this.initializeDB();
+        if ( !this.collection ) throw new Error('No Collection set');
         try {
-            await this.dbo.collection(this.collectionName).updateOne({_id:new ObjectId(id)},{$set: newProperties} );
+            await this.collection.updateOne({_id:new ObjectId(id)},{$set: newProperties} );
         } catch ( err ) {
             console.log(`Failed to update ${id}`);
             console.error(err);
@@ -65,9 +84,10 @@ class MongoDBClient {
     }
 
     async deleteById( id ) {
-        if( !this.db ) await this.initializeDB();
+        if( !this.db && !this.db.isConnected() ) await this.initializeDB();
+        if ( !this.collection ) throw new Error('No Collection set');
         try {
-            await this.dbo.collection( this.collectionName ).deleteOne({_id:new ObjectId(id)});
+            await this.collection.deleteOne({_id:new ObjectId(id)});
         } catch ( err ) {
             console.log(`Failed to delete ${id}`);
             throw err;
