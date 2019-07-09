@@ -5,55 +5,57 @@ var Db = mongodb.Db;
 var Server = mongodb.Server;
 
 var dburl = "mongodb://localhost:27017/";
+var dockerURL = "mongodb://192.168.99.104:27017";
 
 class MongoDBClient {
-    constructor( dbname, url=dburl ) {
+    constructor( dbname, collectionName, url=dockerURL ) {
         this.dbname = dbname;
+        this.collectionName = collectionName;
         this.url = url;
         this.db = null;
         this.dbo = null;
     }
 
     async initializeDB() {
-        this.db = await mongodb.MongoClient.connect( dburl );
+        this.db = await mongodb.MongoClient.connect( this.url );
         this.dbo = this.db.db(this.dbname);
     }
 
-    async findInCollection( collectionName, findFilter={} ) {
+    async findInCollection( findFilter={} ) {
         if ( !this.db ) await this.initializeDB();
-        return this.dbo.collection( collectionName ).find(findFilter).toArray();
+        return this.dbo.collection( this.collectionName ).find(findFilter).toArray();
     };
 
-    async findOneInCollection( collectionName, findFilter={}) {
+    async findOneInCollection( findFilter={}) {
         if ( !this.db ) await this.initializeDB();
-        return await this.dbo.collection( collectionName ).findOne(findFilter);
+        return await this.dbo.collection( this.collectionName ).findOne(findFilter);
     }
 
-    async findById( collectionName, id ) {
+    async findById( id ) {
         if ( !this.db ) await this.initializeDB();
-        return await this.dbo.collection( collectionName ).findOne({_id: new ObjectId(id)});
+        return await this.dbo.collection( this.collectionName ).findOne({_id: new ObjectId(id)});
     }
 
-    async getAllInCollection( collectionName ) {
+    async getAllInCollection() {
         if ( !this.db ) await this.initializeDB();
-        return this.dbo.collection( collectionName ).find().toArray();
+        return this.dbo.collection( this.collectionName ).find().toArray();
     }
 
-    async addToCollection( newEntry, collectionName ) {
+    async addToCollection( newEntry ) {
         if( !this.db ) await this.initializeDB();
         try {
-            await this.dbo.collection(collectionName).insertOne(newEntry);
+            await this.dbo.collection(this.collectionName).insertOne(newEntry);
         } catch ( err ) {
-            console.log(`Failed to add ${newEntry} to ${collectionName}`);
+            console.log(`Failed to add ${newEntry} to ${this.collectionName}`);
             throw err;
         }
         return true;
     }
 
-    async updateInCollection( id, newProperties, collectionName ) {
+    async updateInCollection( id, newProperties ) {
         if( !this.db ) await this.initializeDB();
         try {
-            await this.dbo.collection(collectionName).findOneAndUpdate({_id:new ObjectId(id)},newProperties);
+            await this.dbo.collection(this.collectionName).updateOne({_id:new ObjectId(id)},{$set: newProperties} );
         } catch ( err ) {
             console.log(`Failed to update ${id}`);
             console.error(err);
@@ -62,10 +64,10 @@ class MongoDBClient {
         return true;
     }
 
-    async deleteCustomer( collectionName, id ) {
+    async deleteById( id ) {
         if( !this.db ) await this.initializeDB();
         try {
-            await this.dbo.collection( collectionName ).deleteOne({_id:new ObjectId(id)});
+            await this.dbo.collection( this.collectionName ).deleteOne({_id:new ObjectId(id)});
         } catch ( err ) {
             console.log(`Failed to delete ${id}`);
             throw err;

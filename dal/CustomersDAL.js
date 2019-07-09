@@ -5,35 +5,35 @@ var collectionName = 'customers';
 
 class CustomersDal {
     constructor() {
-        this.mongoClient = new MongoDBClient(dbname);
+        this.mongoClient = new MongoDBClient(dbname, collectionName );
     }
 
     async findCustomer( findFilter={}) {
-        return await this.mongoClient.findInCollection( collectionName, findFilter);
+        return await this.mongoClient.findInCollection( findFilter );
     }
 
     async findOneCustomer( findFilter={}) {
-        return await this.mongoClient.findOneInCollection( collectionName, findFilter );
+        return await this.mongoClient.findOneInCollection( findFilter );
     }
 
     async findById(id) {
-        return await this.mongoClient.findById( collectionName, id );
+        return await this.mongoClient.findById( id );
     }
 
     async getAllCustomers() {
-        return await this.mongoClient.getAllInCollection( collectionName );
+        return await this.mongoClient.getAllInCollection();
     }
 
     async addCustomer(customer) {
-        return await this.mongoClient.addToCollection( customer, collectionName );
+        return await this.mongoClient.addToCollection( customer );
     }
 
     async updateCustomer(id, newProperties) {
-        return await this.mongoClient.updateInCollection( id, newProperties, collectionName );
+        return await this.mongoClient.updateInCollection( id, newProperties );
     }
 
     async deleteCustomer(id) {
-        return await this.mongoClient.deleteCustomer( collectionName, id );
+        return await this.mongoClient.deleteById( id );
     }
 }
 
