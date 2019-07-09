@@ -1,22 +1,22 @@
 <h1 class="text-center mb-3">
-    {{title}}
+    <a href='/'>{{title}}</a>
 </h1>
-<form action="/api/members/{{_id}}" method="PUT" class="mb-4">
+<form id="update-member-form" action="/api/members/{{_id}}" method="PUT" class="mb-4" data-id="{{_id}}" data-bind="submit:submit">
     <div class="row">
         <div class="form-group col-6">
             <label for="name">First Name*</label>
-            <input type="text" name="first_name" value="{{first_name}}" class="form-control" required>
+            <input type="text" name="first_name" class="form-control first_name" data-init="{{first_name}}" data-bind="value: first_name" required>
         </div>
         <div class="form-group col-6">
             <label for="name">Last Name*</label>
-            <input type="text" name="last_name" value="{{last_name}}" class="form-control" required>
+            <input type="text" name="last_name" class="form-control last_name" data-init="{{last_name}}" data-bind="value: last_name" required>
         </div>
     </div>
     <div class="row">
         <div class="form-group col-6">
             <label for="email">Gender</label>
-            <select name="gender" value="{{gender}}" class="form-control">
-                <option></option>
+            <select name="gender" data-init="{{gender}}" data-bind="value: gender" class="form-control gender">
+                <option>remove</option>
                 <option>male</option>
                 <option>female</option>
                 <option>other</option>
@@ -24,9 +24,10 @@
         </div>
         <div class="form-group col-6">
             <label for="email">Email*</label>
-            <input type="text" name="email" value="{{email}}" class="form-control" required>
+            <input type="text" name="email" data-init="{{email}}" data-bind="value: email" class="form-control email" required>
         </div>
     </div>
     <input type="hidden" name="form_submit" value="true"> 
     <input type="submit" value="Update Member" class="btn btn-primary btn-block">
 </form>
+<script type="text/javascript" src="/update_form.js"></script>

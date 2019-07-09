@@ -74,6 +74,7 @@ router.put('/:id', async (req, res) => {
             updateFields.gender = req.body.gender;
         }
     }
+
     try {
         await customersDAL.updateCustomer( id, updateFields );
         res.status(200).json({msg: `Status 200: Successfully updated ${id}`});
